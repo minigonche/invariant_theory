@@ -1,7 +1,7 @@
 # Invariant Theory
 ## Final Project
 
-This repository corresponds to the final project of the course: *Algorithms on Invariant Theory*, offered at the Universidad de los Andes by Mauricio Velasco on the first semester of 2017.
+This repository corresponds to the final project of the course: *Algorithms on Invariant Theory*, offered at Universidad de los Andes by Mauricio Velasco Gregory on the first semester of 2017.
 
 The subject of this project is to create a script that can run on Macaulay2 (*http://www.math.uiuc.edu/Macaulay2/*) that can do the following:
 
