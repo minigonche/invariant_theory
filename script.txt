@@ -1,0 +1,58 @@
+-- Script for final project of Invariant Theory
+-- Authors: Daniel De Roux
+			Felipe Gonzalez 
+
+-- Our field will be the rational numbers, since fractions are only implemented
+--	for ZZ, QQ and finite fields
+-- WARNING! For the methods: createTMatrix, molienTerm and molienTeo, this variable cannot
+--			be overwritten, our else we cannot add the final polinomial fractions
+
+R = QQ[t];
+
+-- ## FUNCTIONS ## --
+-- Function that constructs an n x n  identity matrix with the variable 't', corresponding to the ring 
+--		R = QQ[t] declared before. (I'm sure there is an easier way to do this but I could not find it)
+-- Returns: an n x n identity matrix with the variable 't' on the diagonal
+
+createTMatrix = n -> (
+	-- Constructs using a double loop
+    w := t;
+	m := for j from 1 to n list
+		(for i from 1 to n  list w 
+			do if i > j then w = 0 
+        	else if i == j - 1 then w = t 
+        	else w = 0);
+      matrix(m)
+);
+
+
+
+-- Function that returns the fraction part of the Invariant's Hilbert Series, using Molien.
+-- Inputs: A (matrix): corresponds to the image of a given "g" inside the Group under rho.
+--                     the matrix need to be over the complex filed
+-- Returns: 1/(det(I - t*A^{-1}))
+
+molienTerm = A -> ( 
+	I := id_(QQ^(numgens target A)); -- Identity Matrix	
+	T :=  createTMatrix(numgens target A); -- Diagonal t Matrix 	
+	A1 := inverse(A); -- Inverse of matrix A
+	final := I - T*A;
+	1/det(final)
+);
+
+
+
+-- Function that receives a list of matrices and calculates the Hilbert Series of the invariant ring
+--	using the Molien Theorem
+-- Inputs: matrixList (List of Matrices): In order for this method to work, each  matrix needs to be
+--											over QQ
+-- Returns: Hilbert Series (using Molien Theorem)
+
+molienTeo = matrixList -> (
+	n := length(matrixList); --Number of matrices
+	-- first saves each term on a list
+	all := for i from 0 to (n-1) list molienTerm(matrixList_i);
+	HS := sum(all)/n;
+	HS
+);
+
