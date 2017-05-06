@@ -44,8 +44,7 @@ molienTerm = A -> (
 
 -- Function that receives a list of matrices and calculates the Hilbert Series of the invariant ring
 --	using the Molien Theorem
--- Inputs: matrixList (List of Matrices): In order for this method to work, each  matrix needs to be
---											over QQ
+-- Inputs: matrixList (List of Matrices): In order for this method to work, each  matrix needs to be over QQ
 -- Returns: Hilbert Series (using Molien Theorem)
 
 molienTeo = matrixList -> (
