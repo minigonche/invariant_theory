@@ -44,7 +44,8 @@ molienTerm = A -> (
 
 -- Function that receives a list of matrices and calculates the Hilbert Series of the invariant ring
 --	using the Molien Theorem
--- Inputs: matrixList (List of Matrices): In order for this method to work, each  matrix needs to be over QQ 
+-- Inputs: matrixList (List of Matrices): In order for this method to work, each  matrix needs to be 
+-- over QQ 
 -- Returns: Hilbert Series (using Molien Theorem)
 
 molienTeo = matrixList -> (
@@ -73,7 +74,8 @@ applyMatrixToVars = (A, varList) -> (
 -- Function that calculates the Rayleigh operator for a given polinomial.
 -- Inputs:  f (polinomial) a polinomial expression.
 --			varList (list of varibles) the list of variables. They must be the same variables of f.
---			matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an element of the Group and rho its representation.
+--			matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
+--										   element of the Group and rho its representation.
 -- Returns: polinomial corresponding to the image of the Rayleigh operator
 
 rayleighOperator = (f, varList, matrixList) -> (
@@ -87,9 +89,59 @@ rayleighOperator = (f, varList, matrixList) -> (
 	finalPol
 );
 
+-- Function that calculates the Rayleigh operator for a list of given polinomials.
+-- Inputs:  listOfPolynomials (list of polinomials) a list of polinomial expressions.
+--			varList (list of varibles) the list of variables. They must be the same variables of f.
+--			matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
+--										   element of the Group and rho its representation.
+-- Returns: list of polinomials corresponding to the image of the Rayleigh operator
+
+rayleighOperatorList = (listOfPolynomials, varList, matrixList) -> (
+	totPol := length(listOfPolynomials); -- Number of polynomials
+	result:= for i from 0 to (totPol-1) list rayleighOperator(listOfPolynomials_i, varList, matrixList);
+	result
+);
 
 
 
+-- Function that that constructs a graded polyomial ring with n free variables and returns a list 
+-- with the basis for each degree of the graded ring until d. The ring will have variables x_i so the 
+-- y should be unused. 
+-- Inputs: 	n (integer > 0) the number of variables the ring will have
+--			d (inetger > 0) the mas number of dimension for the basis
+-- Returns: a tuple:
+--			1. The list of variables of the ring
+--			2. A list who's ith entry correspond to the set of polynomials of degree i, that form a
+-- 			   basis for ith coordinate of the graded ring.
+
+getGradedBasis = (n, d) -> (
+	RTemp := QQ[x_1..x_n];
+	basisList := for i from 0 to d list flatten(entries(basis(i,RTemp)));
+	result = { gens(RTemp) , basisList};
+	result
+);
+
+
+
+-- Function that given a set of matrices, constructs a list of invariant polynomials for each degree, 
+-- using the Rayleigh operator. This method assumes that all matrices are square, have rational 
+-- entries, are invertable and have the same dimensions. We also assume that there is a matrix for
+-- each element of the underlying group
+-- Inputs:  matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
+-- element of the Group and rho its representation.
+-- Returns: List of oplynoimals where the entry i correspond to a list with invariant polinomials of 
+-- degree i.
+
+getInvariantPolinomials = matrixList -> (
+	-- Extracts the dimension of the gradient ring (number of columns of the matrices)
+	n := numgens target matrixList_0;
+	d := length(matrixList); -- Size of the group
+	temp := getGradedBasis(n,d);
+	varList:= temp_0; -- The list of varaibles
+	gradedBasis := temp_1; -- The basis for each grade of the ring
+	result := for i from 0 to d list rayleighOperatorList(gradedBasis_i, varList, matrixList);
+	result
+);			
 
 
 
