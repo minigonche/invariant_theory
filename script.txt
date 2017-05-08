@@ -55,3 +55,56 @@ molienTeo = matrixList -> (
 	HS
 );
 
+
+-- Auxiliary method for calculating list of options given a matrix and a list of variables
+-- Inputs:  A (matrix) matrix that will be applyed to the variables
+--			varList (list of variables) the list of varaibles
+-- Returns: list of options representating the effect of the matrix A over the variables varList
+
+applyMatrixToVars = (A, varList) -> (	
+	varMatrix := transpose(matrix({varList})); -- Verival vector of variables
+	result := A*varMatrix; -- Aplies transformation
+	-- Assignes options
+	listOptions := for i from 0 to (length(varList) - 1) list varList_i => result_0_i ;
+	listOptions
+);
+
+
+-- Function that calculates the Rayleigh operator for a given polinomial.
+-- Inputs:  f (polinomial) a polinomial expression.
+--			varList (list of varibles) the list of variables. They must be the same variables of f.
+--			matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an element of the Group and rho its representation.
+-- Returns: polinomial corresponding to the image of the Rayleigh operator
+
+rayleighOperator = (f, varList, matrixList) -> (
+	n := length(matrixList); --Number of matrices
+	-- Calculates the inverse of each matrix
+	inverseList := for i from 0 to (n-1) list inverse(matrixList_i); 
+	-- Calculates the list of options options for each matrix
+	allOptions := for i from 0 to (n-1) list applyMatrixToVars(matrixList_i, varList);
+	allApplications := for i from 0 to (n-1) list sub(f, allOptions_i);
+	finalPol := sum(allApplications)/n;
+	finalPol
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
