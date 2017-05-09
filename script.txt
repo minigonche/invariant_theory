@@ -57,6 +57,7 @@ molienTeo = matrixList -> (
 );
 
 
+-- AUXILIARY
 -- Auxiliary method for calculating list of options given a matrix and a list of variables
 -- Inputs:  A (matrix) matrix that will be applyed to the variables
 --			varList (list of variables) the list of varaibles
@@ -110,14 +111,14 @@ rayleighOperatorList = (listOfPolynomials, varList, matrixList) -> (
 -- Inputs: 	n (integer > 0) the number of variables the ring will have
 --			d (inetger > 0) the mas number of dimension for the basis
 -- Returns: a tuple:
---			1. The list of variables of the ring
+--			1. The ring of polynomials
 --			2. A list who's ith entry correspond to the set of polynomials of degree i, that form a
 -- 			   basis for ith coordinate of the graded ring.
 
 getGradedBasis = (n, d) -> (
-	RTemp := QQ[x_1..x_n];
+	RTemp := QQ[z_1..z_n];
 	basisList := for i from 0 to d list flatten(entries(basis(i,RTemp)));
-	result = { gens(RTemp) , basisList};
+	result = { RTemp , basisList};
 	result
 );
 
@@ -128,20 +129,97 @@ getGradedBasis = (n, d) -> (
 -- entries, are invertable and have the same dimensions. We also assume that there is a matrix for
 -- each element of the underlying group
 -- Inputs:  matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
--- element of the Group and rho its representation.
--- Returns: List of oplynoimals where the entry i correspond to a list with invariant polinomials of 
--- degree i.
+-- 						element of the Group and rho its representation.
+-- 			flat (number in {0,1}): indicates if the list should be flatten or not
+-- Returns: a tuple:
+--			1. The list of variables of the polynomials (are of the form z_1 .. z_n)
+--			2. Depends of the parameter flat. If flat = 0 then: List of oplynoimals where the entry i 
+-- 			   correspond to a list with invariant polinomials of degree i. Else if flat = 1 then: 
+--			   List of invariant polinomials
 
-getInvariantPolinomials = matrixList -> (
+getInvariantPolinomials = (matrixList, flat) -> (
 	-- Extracts the dimension of the gradient ring (number of columns of the matrices)
 	n := numgens target matrixList_0;
 	d := length(matrixList); -- Size of the group
 	temp := getGradedBasis(n,d);
-	varList:= temp_0; -- The list of varaibles
+	RTemp:= temp_0; -- The ring of polinmials
+	varList := gens(RTemp); -- list of variables
 	gradedBasis := temp_1; -- The basis for each grade of the ring
-	result := for i from 0 to d list rayleighOperatorList(gradedBasis_i, varList, matrixList);
+	poly = for i from 0 to d list rayleighOperatorList(gradedBasis_i, varList, matrixList);
+	if flat == 1 then poly = flatten(poly);
+	result := {varList, poly};
 	result
 );			
+
+
+-- AUXILIARY
+-- Auxiliary method that replaces all variables in all the polynomials in the given list with 
+-- new ones.
+-- Inputs:  polinomialList (list of polinomials): List of polinomials in the old variables
+--			oldVar (list of variables): list of all the old variables. Must be the same size as
+--										new variables
+--			newVar (list of variables): list of all the new variables. Must be the same size as
+--										old variables
+
+replaceVariables = (polinomialList, oldVar, newVar) -> (
+	numVar := length(oldVar); -- Number of variables
+	numPol := length(polinomialList); -- Number of polynomials
+	-- Creates replacement options
+	replaceOptions := for i from 0 to numVar - 1 list oldVar_i => newVar_i;
+	-- Replaces polynomials
+	replacedPolynomials := for i from 0 to numPol - 1 list sub(polinomialList_i, replaceOptions);
+	replacedPolynomials
+);
+
+-- Function that given a set of linearly independet polinomials f1,..,fm in the variables x_1,..,x_n
+-- computes QQ[f1,..,fm]
+-- Inputs: varList (list of variables) the list of variables of the polinomials (cannot be x_i or y_i)
+--		   polinomialList (list of polinomials): List of linearly indepent polinomials that 
+--				  		  generate all the invariants of degree less than a given d.
+-- Returns: A quotient ring that is isomorphic to QQ[f1,...,fm]
+
+getQuotientRing = (varList, polinomialList) -> (
+  m := length(polinomialList); -- Number of polinomials
+  n := length(varList); -- number of variables
+  RNewtemp := QQ[y_1..y_m,x_1..x_n, MonomialOrder => Eliminate m ]; -- New ring of polinomials
+  -- Selects new variables for polynomials (x_1..x_m)
+  temp := gens(RNewtemp);
+  newVar := for i from m  to n + m - 1 list temp_i;
+  newPol := replaceVariables(polinomialList, varList, newVar);
+  genIdeal := for i from 0 to (m-1) list y_(i+1) - newPol_i;
+  J := ideal(genIdeal);
+  Inters := selectInSubring(1, gens gb J);
+  Inters
+);
+
+
+-- Function that returns the set of matrices for S3
+-- Returns: List with the matrix representation of S3
+
+getS3 = () -> (
+	Ae := matrix(QQ,{{1,0,0},{0,1,0},{0,0,1}});
+	A12 := matrix(QQ,{{0,1,0},{1,0,0},{0,0,1}});
+	A13 := matrix(QQ,{{0,0,1},{0,1,0},{1,0,0}});
+	A23 := matrix(QQ,{{1,0,0},{0,0,1},{0,1,0}});
+	A123 := A12*A23;
+	A132 := A13*A23;
+	matrixList := {Ae, A12, A13, A23, A123, A132};
+	matrixList
+);
+
+
+-- Function that returns the set of matrices for S2
+-- Returns: List with the matrix representation of S2
+
+getS2 = () -> (
+	Ae := matrix(QQ,{{1,0},{0,1}});
+	A12 := matrix(QQ,{{0,1},{1,0}});	
+	matrixList := {Ae, A12};
+	matrixList
+);	
+
+
+
 
 
 
