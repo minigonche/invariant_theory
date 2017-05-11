@@ -7,7 +7,6 @@
 -- WARNING! For the methods: createTMatrix, molienTerm and molienTeo, this variable cannot
 --			be overwritten, our else we cannot add the final polinomial fractions
 
-R = QQ[t];
 
 -- ## FUNCTIONS ## --
 -- Function that constructs an n x n  identity matrix with the variable 't', corresponding to the ring 
@@ -15,6 +14,7 @@ R = QQ[t];
 -- Returns: an n x n identity matrix with the variable 't' on the diagonal
 
 createTMatrix = n -> (
+	Rtempt := QQ[t];
 	-- Constructs using a double loop
     w := t;
 	m := for j from 1 to n list
@@ -30,12 +30,10 @@ createTMatrix = n -> (
 -- Function that returns the fraction part of the Invariant's Hilbert Series, using Molien.
 -- Inputs: A (matrix): corresponds to the image of a given "g" inside the Group under rho.
 --                     the matrix need to be over the complex filed
--- Returns: 1/(det(I - t*A^{-1}))
+-- Returns: 1/(det(I - t*A))
 
-molienTerm = A -> ( 
-	I := id_(QQ^(numgens target A)); -- Identity Matrix	
-	T :=  createTMatrix(numgens target A); -- Diagonal t Matrix 	
-	A1 := inverse(A); -- Inverse of matrix A
+molienTerm = (A, T) -> ( 
+	I := id_(QQ^(numgens target A)); -- Identity Matrix		
 	final := I - T*A;
 	1/det(final)
 );
@@ -50,8 +48,9 @@ molienTerm = A -> (
 
 molienTeo = matrixList -> (
 	n := length(matrixList); --Number of matrices
+	T :=  createTMatrix(numgens target matrixList_0); -- Diagonal t Matrix 		
 	-- first saves each term on a list
-	all := for i from 0 to (n-1) list molienTerm(matrixList_i);
+	all := for i from 0 to (n-1) list molienTerm(matrixList_i, T);
 	HS := sum(all)/n;
 	HS
 );
@@ -117,7 +116,7 @@ rayleighOperatorList = (listOfPolynomials, varList, matrixList) -> (
 
 getGradedBasis = (n, d) -> (
 	RTemp := QQ[z_1..z_n];
-	basisList := for i from 0 to d list flatten(entries(basis(i,RTemp)));
+	basisList := for i from 1 to d list flatten(entries(basis(i,RTemp)));
 	result = { RTemp , basisList};
 	result
 );
@@ -145,9 +144,9 @@ getInvariantPolinomials = (matrixList, flat) -> (
 	RTemp:= temp_0; -- The ring of polinmials
 	varList := gens(RTemp); -- list of variables
 	gradedBasis := temp_1; -- The basis for each grade of the ring
-	poly = for i from 0 to d list rayleighOperatorList(gradedBasis_i, varList, matrixList);
-	if flat == 1 then poly = flatten(poly);
-	result := {varList, poly};
+	polyTemp := for i from 0 to d list unique(rayleighOperatorList(gradedBasis_i, varList, matrixList));
+	if flat == 1 then return({varList, flatten(polyTemp)});
+	result := {varList, polyTemp};
 	result
 );			
 
@@ -181,16 +180,16 @@ replaceVariables = (polinomialList, oldVar, newVar) -> (
 getQuotientRing = (varList, polinomialList) -> (
   m := length(polinomialList); -- Number of polinomials
   n := length(varList); -- number of variables
-  RNewtemp := QQ[y_1..y_m,x_1..x_n, MonomialOrder => Eliminate m ]; -- New ring of polinomials
+  Rtemp:= QQ[y_1..y_m];
+  Ltemp:= QQ[x_1..x_n]; -- New ring of polinomials
   -- Selects new variables for polynomials (x_1..x_m)
-  temp := gens(RNewtemp);
-  newVar := for i from m  to n + m - 1 list temp_i;
+  newVar := gens(Ltemp);
   newPol := replaceVariables(polinomialList, varList, newVar);
-  genIdeal := for i from 0 to (m-1) list y_(i+1) - newPol_i;
-  J := ideal(genIdeal);
-  Inters := selectInSubring(1, gens gb J);
-  Inters
+  Phi:= map(Ltemp,Rtemp,newPol); -- Transformation
+  quotientRing := coimage Phi;
+  quotientRing
 );
+
 
 
 -- Function that returns the set of matrices for S3
@@ -220,11 +219,35 @@ getS2 = () -> (
 
 
 
+-- Ejemplo
+
+matrixList = getS3();
+pTemp = getInvariantPolinomials(matrixList, 1);
+qr = getQuotientRing(pTemp_0, pTemp_1);
+hilbertSeries(qr)
+molienTeo(matrixList)
 
 
 
 
 
+Gonche, la siguiente funcion permite calcular J inter K[y_1,..,y_m].
+El unico problema que hay que tener en cuenta es que utiliza los 
+anillos K[x_1..x_n] y K[y_1,..,y_m] que supongo que habra que meter por separado o algo asi. 
+Es algo tarde entonces no pruebo el metodo pero estoy casi seguro que deberia ser asi. Funciona
+al menos en el ejemplo del libro.
+Creo que ud habia cambiado unas cosas en la funcion getQuotientRing, pero la voy a volver
+a escribir desde cero y supongo que toca reconciliar los cambios manana.
+
+getQuotientRing = (polinomialList,n) -> (
+  m:= length(polinomialList);
+  Rtemp:= QQ[y_1..y_m];
+  Ltemp:= QQ[x_1..x_n];
+  Phi:= map(Ltemp,Rtemp,polinomialList);
+  quotientRing := coimage Phi;
+  HS(quotientring);
+)
+--falta comparar esta serie con la de molien e iterar si dan distintas.
 
 
 
