@@ -11,7 +11,9 @@
 -- ## FUNCTIONS ## --
 -- Function that constructs an n x n  identity matrix with the variable 't', corresponding to the ring 
 --		R = QQ[t] declared before. (I'm sure there is an easier way to do this but I could not find it)
--- Returns: an n x n identity matrix with the variable 't' on the diagonal
+-- Returns: a tuple
+--			1. An n x n identity matrix with the variable 't' on the diagonal
+--			2. The t variable
 
 createTMatrix = n -> (
 	Rtempt := QQ[t];
@@ -22,7 +24,7 @@ createTMatrix = n -> (
 			do if i > j then w = 0 
         	else if i == j - 1 then w = t 
         	else w = 0);
-      matrix(m)
+    {matrix(m),t}
 );
 
 
@@ -44,15 +46,19 @@ molienTerm = (A, T) -> (
 --	using the Molien Theorem
 -- Inputs: matrixList (List of Matrices): In order for this method to work, each  matrix needs to be 
 -- over QQ 
--- Returns: Hilbert Series (using Molien Theorem)
+-- Returns: A tuple:
+--			1. Hilbert Series (using Molien Theorem)
+--			2. The 't' variable for the series
 
 molienTeo = matrixList -> (
 	n := length(matrixList); --Number of matrices
-	T :=  createTMatrix(numgens target matrixList_0); -- Diagonal t Matrix 		
+	temp := createTMatrix(numgens target matrixList_0); 	
+	T := temp_0; -- Diagonal t Matrix 
+	t := temp_1; -- variable
 	-- first saves each term on a list
 	all := for i from 0 to (n-1) list molienTerm(matrixList_i, T);
 	HS := sum(all)/n;
-	HS
+	{HS,t}
 );
 
 
@@ -144,7 +150,7 @@ getInvariantPolinomials = (matrixList, flat) -> (
 	RTemp:= temp_0; -- The ring of polinmials
 	varList := gens(RTemp); -- list of variables
 	gradedBasis := temp_1; -- The basis for each grade of the ring
-	polyTemp := for i from 0 to d list unique(rayleighOperatorList(gradedBasis_i, varList, matrixList));
+	polyTemp := for i from 0 to (d-1) list unique(rayleighOperatorList(gradedBasis_i, varList, matrixList));
 	if flat == 1 then return({varList, flatten(polyTemp)});
 	result := {varList, polyTemp};
 	result
@@ -180,7 +186,8 @@ replaceVariables = (polinomialList, oldVar, newVar) -> (
 getQuotientRing = (varList, polinomialList) -> (
   m := length(polinomialList); -- Number of polinomials
   n := length(varList); -- number of variables
-  Rtemp:= QQ[y_1..y_m];
+  grados := apply(polinomialList,degree);
+  Rtemp:= QQ[y_1..y_m,Degrees=>grados];
   Ltemp:= QQ[x_1..x_n]; -- New ring of polinomials
   -- Selects new variables for polynomials (x_1..x_m)
   newVar := gens(Ltemp);
@@ -191,6 +198,37 @@ getQuotientRing = (varList, polinomialList) -> (
 );
 
 
+-- Function that returns the ring of invariants given a matrixlist
+
+getInvariantRepresentation = matrixList -> (
+	-- Molien series of the matrix list
+	temp := molienTeo(matrixList);
+	molienSeries := temp_0; -- The series
+	molienVar := temp_1; -- The variable
+	-- Gets Invariant polinomials
+	pTemp := getInvariantPolinomials(matrixList, 0);
+	polyVars := pTemp_0; -- Variables of the invariant polynomials
+	completePoly := pTemp_1; -- All the polynomials
+	-- STARTS THE ITERATION OF THE INVARIANT POLINOMIALS
+	i := 0; -- iterator
+	polinomialList := completePoly_0; -- Starts list with one polynomial
+	flag := 0; -- The while flag
+	qr := null; -- The quotient ring of invariants
+	while flag == 0 do (	
+		i = i + 1; -- Advances 
+		-- Gets the quotient ring corresponding to the polynomials
+		qr = getQuotientRing(polyVars, polinomialList);
+		-- CHECKS IF THE HS IS EQUAL TO MOLIEN SERIES
+		-- Gets the polinomial of the hilbert series
+		polHil = reduceHilbert(hilbertSeries(qr));
+		use ring numerator polHil; -- No Fucking Idea
+		polHil = value(sub(polHil, T => molienVar)); -- Converts to fraction of 't'
+		if (polHil - molienSeries) != 0 then polinomialList = flatten({polinomialList, completePoly_i})
+		else flag = 1;
+		if flag == 0 then print("Next Iteration");
+		);
+	qr	
+);
 
 -- Function that returns the set of matrices for S3
 -- Returns: List with the matrix representation of S3
@@ -221,41 +259,31 @@ getS2 = () -> (
 
 -- Ejemplo
 
-matrixList = getS3();
+matrixList = getS2();
 pTemp = getInvariantPolinomials(matrixList, 1);
 qr = getQuotientRing(pTemp_0, pTemp_1);
-hilbertSeries(qr)
+pol1 = reduceHilbert(hilbertSeries(qr))
 molienTeo(matrixList)
 
 
 
+-- MAURICIO
 
-
-Gonche, la siguiente funcion permite calcular J inter K[y_1,..,y_m].
-El unico problema que hay que tener en cuenta es que utiliza los 
-anillos K[x_1..x_n] y K[y_1,..,y_m] que supongo que habra que meter por separado o algo asi. 
-Es algo tarde entonces no pruebo el metodo pero estoy casi seguro que deberia ser asi. Funciona
-al menos en el ejemplo del libro.
-Creo que ud habia cambiado unas cosas en la funcion getQuotientRing, pero la voy a volver
-a escribir desde cero y supongo que toca reconciliar los cambios manana.
-
-getQuotientRing = (polinomialList,n) -> (
-  m:= length(polinomialList);
-  Rtemp:= QQ[y_1..y_m];
-  Ltemp:= QQ[x_1..x_n];
-  Phi:= map(Ltemp,Rtemp,polinomialList);
-  quotientRing := coimage Phi;
-  HS(quotientring);
-)
---falta comparar esta serie con la de molien e iterar si dan distintas.
-
-
-
-
-
-
-
-
+--Problema: Encontrar invariantes de un grado dado
+l=10
+kk=QQ[c_1..c_10]
+R=kk[x_1..x_3]
+F=map(R,R,{x_2,x_3,x_1})
+G=map(R,R,{x_2,x_1,x_3})
+B=basis(3,R)
+B2 = flatten entries B
+b = length(B2)
+iterador = flatten entries vars(kk)
+PG =sum apply(length(iterador), j-> iterador_j*B2_j)
+A=coefficients(PG-F(PG))
+B=coefficients(PG-G(PG))
+B#1
+A#1
 
 
 
