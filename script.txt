@@ -109,52 +109,34 @@ rayleighOperatorList = (listOfPolynomials, varList, matrixList) -> (
 );
 
 
-
--- Function that that constructs a graded polyomial ring with n free variables and returns a list 
--- with the basis for each degree of the graded ring until d. The ring will have variables x_i so the 
--- y should be unused. 
--- Inputs: 	n (integer > 0) the number of variables the ring will have
---			d (inetger > 0) the mas number of dimension for the basis
--- Returns: a tuple:
---			1. The ring of polynomials
---			2. A list who's ith entry correspond to the set of polynomials of degree i, that form a
--- 			   basis for ith coordinate of the graded ring.
-
-getGradedBasis = (n, d) -> (
-	RTemp := QQ[z_1..z_n];
-	basisList := for i from 1 to d list flatten(entries(basis(i,RTemp)));
-	result = { RTemp , basisList};
-	result
-);
-
-
-
--- Function that given a set of matrices, constructs a list of invariant polynomials for each degree, 
+-- Function that given a set of matrices, constructs a list of invariant polynomials for a given degree
 -- using the Rayleigh operator. This method assumes that all matrices are square, have rational 
 -- entries, are invertable and have the same dimensions. We also assume that there is a matrix for
 -- each element of the underlying group
--- Inputs:  matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
+-- Inputs:  polyRing (Ring of polynomials): Ring of polinomials that the matrices act on
+--			matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
 -- 						element of the Group and rho its representation.
--- 			flat (number in {0,1}): indicates if the list should be flatten or not
--- Returns: a tuple:
---			1. The list of variables of the polynomials (are of the form z_1 .. z_n)
---			2. Depends of the parameter flat. If flat = 0 then: List of oplynoimals where the entry i 
--- 			   correspond to a list with invariant polinomials of degree i. Else if flat = 1 then: 
---			   List of invariant polinomials
+--			d (integer > 0): desired dimension
+-- Returns: invariant polinomials of degree d
 
-getInvariantPolinomials = (matrixList, flat) -> (
-	-- Extracts the dimension of the gradient ring (number of columns of the matrices)
+getInvariantPolinomialsOfDegree = (polyRing, matrixList, d) -> (
+	varList := gens(polyRing); -- list of variables
+	gradedBasis := flatten(entries(basis(d,polyRing)));
+	invPoly := unique(rayleighOperatorList(gradedBasis, varList, matrixList));
+	invPoly
+);
+
+-- Given a set of matrices constructs a corresponding ring using 'z' as variables
+-- Inputs: matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
+-- 						element of the Group and rho its representation.
+-- Returns: ring of polinomials that the matrices will act on
+
+getRingOfPolynomials = matrixList -> (
 	n := numgens target matrixList_0;
-	d := length(matrixList); -- Size of the group
-	temp := getGradedBasis(n,d);
-	RTemp:= temp_0; -- The ring of polinmials
-	varList := gens(RTemp); -- list of variables
-	gradedBasis := temp_1; -- The basis for each grade of the ring
-	polyTemp := for i from 0 to (d-1) list unique(rayleighOperatorList(gradedBasis_i, varList, matrixList));
-	if flat == 1 then return({varList, flatten(polyTemp)});
-	result := {varList, polyTemp};
-	result
-);			
+	polyRing := QQ[z_1..z_n];
+	polyRing
+);
+
 
 
 -- AUXILIARY
@@ -199,6 +181,9 @@ getQuotientRing = (varList, polinomialList) -> (
 
 
 -- Function that returns the ring of invariants given a matrixlist
+-- Inputs: matrixList (List of Matrices): list of matrices corresponding to rho(g), where g is an 
+--										   element of the Group and rho its representation.
+-- Returns: Ring of invariants
 
 getInvariantRepresentation = matrixList -> (
 	-- Molien series of the matrix list
@@ -206,17 +191,16 @@ getInvariantRepresentation = matrixList -> (
 	molienSeries := temp_0; -- The series
 	molienVar := temp_1; -- The variable
 	-- Gets Invariant polinomials
-	pTemp := getInvariantPolinomials(matrixList, 0);
-	polyVars := pTemp_0; -- Variables of the invariant polynomials
-	completePoly := pTemp_1; -- All the polynomials
+	polyRing := getRingOfPolynomials(matrixList);
+	polyVars := gens(polyRing); -- Variables of the invariant polynomials
 	-- STARTS THE ITERATION OF THE INVARIANT POLINOMIALS
 	i := 0; -- iterator
-	polinomialList := completePoly_0; -- Starts list with one polynomial
+	polinomialList := getInvariantPolinomialsOfDegree(polyRing, matrixList, 1) ; -- Starts list with polynomials of degree 1
 	flag := 0; -- The while flag
 	qr := null; -- The quotient ring of invariants
 	while flag == 0 do (	
 		i = i + 1; -- Advances 
-		if i == length(matrixList) then error("The dimension of invariant polynomials should not excced the size of the group");
+		if i > length(matrixList) then error("The dimension of invariant polynomials should not excced the size of the group");
 		-- Gets the quotient ring corresponding to the polynomials
 		qr = getQuotientRing(polyVars, polinomialList);
 		-- CHECKS IF THE HS IS EQUAL TO MOLIEN SERIES
@@ -224,7 +208,8 @@ getInvariantRepresentation = matrixList -> (
 		polHil = reduceHilbert(hilbertSeries(qr));
 		use ring numerator polHil; -- No Fucking Idea
 		polHil = value(sub(polHil, T => molienVar)); -- Converts to fraction of 't'
-		if (polHil - molienSeries) != 0 then polinomialList = flatten({polinomialList, completePoly_i})
+		if (polHil - molienSeries) != 0 then polinomialList = flatten({polinomialList, 
+		getInvariantPolinomialsOfDegree(polyRing, matrixList, i + 1)})
 		else flag = 1;
 		if flag == 0 then print("Next Iteration");		
 		);
@@ -260,11 +245,6 @@ getS2 = () -> (
 
 -- Ejemplo
 
-matrixList = getS2();
-pTemp = getInvariantPolinomials(matrixList, 1);
-qr = getQuotientRing(pTemp_0, pTemp_1);
-pol1 = reduceHilbert(hilbertSeries(qr))
-molienTeo(matrixList)
 
 
 
