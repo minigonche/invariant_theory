@@ -1,0 +1,119 @@
+
+<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
+<!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head><title>variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="../CSS/doc.css"/>
+</head>
+<body>
+<div><a href="../documentation.html" title="Macaulay2 documentation">Invariant Rings</a> > <a href="get_invariant.html" title="">getInvariantRepresentation</a></div>
+<hr/>
+<div><h1>getInvariantRepresentation( matrixList )</h1>
+<div>Function that given a list of matrices, calculates the invariant ring under their action.
+
+<div class="single"><h2>Synopsis</h2>
+<ul><li><dl class="element"><dt>Usage:</dt><dd>
+<tt>getInvariantRepresentation(m)</tt></dd></dl>
+</li>
+<li><span>Function: <a href="get_invariant.html">getInvariantRepresentation</a></span></li>
+<li><div class="single">Inputs:
+
+<ul>
+<li>
+<span>
+<tt>m</tt>, <span>a list of matrices, must be over QQ</span>
+</span>
+</li>
+
+</span>
+</ul>
+</div>
+</li>
+<li><div class="single">Outputs:
+
+<ul>
+<li>
+<span>
+<span> A ring of invariants
+
+</span>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+
+
+<div class="single"><h2>Description</h2>
+<div>Function that returns the ring of invariants given a matrixlist representing the action of a given finite group under a representation.
+
+<table class="examples"><tr><td><pre>
+
+i1 : s3 = getSn(3);
+
+
+</td></tr>
+<tr><td><pre>
+
+i2 : invRing = getInvariantRepresentation(s3);
+
+i3 : describe(invRing)
+
+                                                                QQ[y , y , y , y , y , y ]
+                                                                    1   2   3   4   5   6
+o1 = ---------------------------------------------------------------------------------------------------------------------------------------------
+         2                                                          2                  2     2
+      (3y  - y  - 2y , 3y y  - 2y  - y , 3y y  - y  - 2y , y y  + 2y  - 2y y  - y y , y  - 4y  - y y  + 2y y  + 2y y , y y  - 2y y  + 2y y  - y y )
+         1    2     3    1 3     5    6    1 2    4     5   2 3     3     1 5    1 6   2     3    1 4     1 5     1 6   3 4     2 5     3 5    2 6
+
+
+
+</pre>
+</td></tr>
+</table>
+
+We can calculate the Hilbert Series
+
+<table class="examples"><tr><td><pre>
+
+i4 : reduceHilbert(hilbertSeries(invRing))
+
+                 1
+o2 = -----------------------
+            3       2
+      (1 - T )(1 - T )(1 - T)
+
+o2 : Expression of class Divide
+
+</pre>
+</td></tr>
+</table>
+
+
+</div>
+</div>
+
+
+
+
+</div>
+<div class="single"><h2>See also</h2>
+
+
+<ul><li><span><a href="molien_teo.html" title="">molienTeo</a></span></li>
+
+<li><span><a href="reynolds_op.html" title="">reynoldsOperator</a></span></li>
+
+<li><span><a href="get_quotient.html" title="">getQuotientRing</a></span></li>
+
+
+</div>
+
+</div>
+</body>
+</html>
+

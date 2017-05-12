@@ -1,0 +1,71 @@
+
+<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
+<!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head><title>variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="../CSS/doc.css"/>
+</head>
+<body>
+<div><a href="../documentation.html" title="Macaulay2 documentation">Invariant Rings</a> > <a href="_temp_.html" title="">_temp_</a></div>
+<hr/>
+<div><h1>_temp_</h1>
+<div>Valid names for symbols may be constructed using letters, digits, and the apostrophe, and should not begin with a digit.<table class="examples"><tr><td><pre>i1 : x
+
+o1 = x
+
+o1 : Symbol</pre>
+</td></tr>
+<tr><td><pre>i2 : q0r55
+
+o2 = q0r55
+
+o2 : Symbol</pre>
+</td></tr>
+<tr><td><pre>i3 : f'
+
+o3 = f'
+
+o3 : Symbol</pre>
+</td></tr>
+</table>
+Some symbols have preassigned meanings and values.  For example, symbols consisting of the letter <tt>o</tt> followed by a number are used to store output values.<table class="examples"><tr><td><pre>i4 : o2
+
+o4 = q0r55
+
+o4 : Symbol</pre>
+</td></tr>
+</table>
+Other symbols refer to functions built into Macaulay2 that provide much of its functionality.<p/>
+Sometimes, one wants the symbol, rather than the particular value it happens to have at the moment.  For example after setting the value of <tt>x</tt> to 5, the value of the variable <tt>x</tt> is no longer the symbol <tt>x</tt>.  Use <a href="_symbol.html" title="get a symbol">symbol</a> to recover the symbol itself.<table class="examples"><tr><td><pre>i5 : x=5
+
+o5 = 5</pre>
+</td></tr>
+<tr><td><pre>i6 : x
+
+o6 = 5</pre>
+</td></tr>
+<tr><td><pre>i7 : symbol x
+
+o7 = x
+
+o7 : Symbol</pre>
+</td></tr>
+</table>
+</div>
+<div class="single"><h2>See also</h2>
+<ul><li><span><a href="_symbol.html" title="get a symbol">symbol</a> -- get a symbol</span></li>
+<li><span><a href="_local.html" title="get a local symbol">local</a> -- get a local symbol</span></li>
+<li><span><a href="_global.html" title="get a global symbol">global</a> -- get a global symbol</span></li>
+<li><span><a href="_list__User__Symbols.html" title="display the user's symbols">listUserSymbols</a> -- display the user's symbols</span></li>
+<li><span><a href="_clear__Output.html" title="forget output values">clearOutput</a> -- forget output values</span></li>
+<li><span><a href="_clear__All.html" title="forget everything">clearAll</a> -- forget everything</span></li>
+<li><span><a href="___Symbol.html" title="the class of all symbols">Symbol</a> -- the class of all symbols</span></li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>
+

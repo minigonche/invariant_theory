@@ -1,0 +1,102 @@
+
+<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
+<!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head><title>variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="../CSS/doc.css"/>
+</head>
+<body>
+<div><a href="../documentation.html" title="Macaulay2 documentation">Invariant Rings</a> > <a href="molien_teo.html" title="">molienTeo</a></div>
+<hr/>
+<div><h1>molienTeo( matrixList )</h1>
+<div>Calculates the Hilbert series of a given matrix list
+
+<div class="single"><h2>Synopsis</h2>
+<ul><li><dl class="element"><dt>Usage:</dt><dd><tt>molienTeo(m)</tt></dd></dl>
+</li>
+<li><span>Function: <a href="molien_teo.html">molienTeo</a></span></li>
+<li><div class="single">Inputs:
+
+<ul>
+<li>
+<span>
+<tt>m</tt>, <span>a list of matrices, must be over QQ</span>
+</span>
+</li>
+</ul>
+</div>
+</li>
+<li><div class="single">Outputs:
+
+<ul>
+<li>
+<span>
+<span> A tuple
+<ul>
+	<li>
+		<span> The hilbert series as a <a href="http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9/share/doc/Macaulay2/Macaulay2Doc/html/___Fraction__Field.html"> fraction field</a> </span>
+		<span> The variabe t used in the series.</span>
+	</li>
+</ul>
+
+</span>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+
+
+<div class="single"><h2>Description</h2>
+<div>Given a list of matrices m, for example S2, the method outputs the corresponding Hilbert Series and variable:
+
+<table class="examples"><tr><td><pre>
+
+i1 : s2 = getSn(2)
+
+o1 = {| 1 0 |, | 0 1 |}
+      | 0 1 |  | 1 0 |
+
+o1 : List
+
+</td></tr>
+<tr><td><pre>
+
+i2 : molienTeo(s2)
+
+               1
+o2 = {---------------, t}
+         3    2
+        t  - t  - t + 1
+
+o2 : List
+
+</pre>
+</td></tr>
+</table>
+</div>
+</div>
+
+
+
+
+</div>
+<div class="single"><h2>See also</h2>
+
+
+<li><span><a href="reynolds_op.html" title="">reynoldsOperator</a></span></li>
+
+<li><span><a href="get_quotient.html" title="">getQuotientRing</a></span></li>
+
+<li><span><a href="get_invariant.html" title="">getInvariantRepresentation</a></span></li>
+
+</div>
+
+</div>
+</body>
+</html>
+

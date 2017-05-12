@@ -1,0 +1,114 @@
+
+<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
+<!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head><title>variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="../CSS/doc.css"/>
+</head>
+<body>
+<div><a href="../documentation.html" title="Macaulay2 documentation">Invariant Rings</a> > <a href="get_quotient.html" title="">getQuotientRing</a></div>
+<hr/>
+<div><h1>getQuotientRing(varList, polinomialList)</h1>
+<div>Function that given a set of linearly independet polinomials f1,..,fm in the variables x_1,..,x_n, computes QQ[f1,..,fm]
+
+<div class="single"><h2>Synopsis</h2>
+<ul><li><dl class="element"><dt>Usage:</dt><dd>
+<tt>getQuotientRing(v, p)</tt></dd></dl>
+</li>
+<li><span>Function: <a href="get_quotient.html">getQuotientRing</a></span></li>
+<li><div class="single">Inputs:
+
+<ul>
+
+<li>
+<span>
+<tt>v</tt>, <span><span> list of variables of the polynomials </span> </span>
+</span>
+</li>
+
+<li>
+<span>
+<tt>p</tt>, <span><span> a list of <a href="http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9/share/doc/Macaulay2/Macaulay2Doc/html/_manipulating_sppolynomials.html"> polynomials </a> </span> </span>
+</span>
+</li>
+
+
+</span>
+</ul>
+</div>
+</li>
+<li><div class="single">Outputs:
+
+<ul>
+<li>
+<span>
+<span> The corresponing ring of polynomials.
+
+</span>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+
+
+<div class="single"><h2>Description</h2>
+<div> Here an exapmle of its usage
+
+<table class="examples"><tr><td><pre>
+i1 : R = QQ[x_1,x_2];
+
+i2 : s2 = getSn(2);
+
+i3 : p = {x_1 + x_2, x_1*x_2}
+
+o1 = {x  + x , x x }
+         1    2   1 2
+
+o1 : List
+
+
+</td></tr>
+<tr><td><pre>
+
+i4 : INV = getQuotientRing(gens(R), p);
+
+i5 : describe(INV)
+
+o2 = QQ[y , y , Degrees => {1..2}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank
+           1   2                                                   {GRevLex => {1..2} }
+                                                                   {Position => Up    }
+       ---------------------------------------------------------------------------------------------
+       => 1]
+
+</pre>
+</td></tr>
+</table>
+</div>
+</div>
+
+
+
+
+</div>
+<div class="single"><h2>See also</h2>
+
+<ul><li><span><a href="molien_teo.html" title="">molienTeo</a></span></li>
+
+<li><span><a href="reynolds_op.html" title="">reynoldsOperator</a></span></li>
+
+
+<li><span><a href="get_invariant.html" title="">getInvariantRepresentation</a></span></li>
+
+</ul>
+
+</div>
+
+</div>
+</body>
+</html>
+

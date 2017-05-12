@@ -1,0 +1,110 @@
+
+<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
+<!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head><title>variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="../CSS/doc.css"/>
+</head>
+<body>
+<div><a href="../documentation.html" title="Macaulay2 documentation">Invariant Rings</a> > <a href="reynolds_op.html" title="">reynoldsOperator</a></div>
+<hr/>
+<div><h1>reynoldsOperator( f, varList, matrixList )</h1>
+<div>Function that calculates the reynolds operator for a given polinomial and matrix list.
+
+<div class="single"><h2>Synopsis</h2>
+<ul><li><dl class="element"><dt>Usage:</dt><dd>
+<tt>reynoldsOperator(f,v,m)</tt></dd></dl>
+</li>
+<li><span>Function: <a href="reynolds_op.html">reynoldsOperator</a></span></li>
+<li><div class="single">Inputs:
+
+<ul>
+<li>
+<span>
+<tt>f</tt>, <span><span> a <a href="http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9/share/doc/Macaulay2/Macaulay2Doc/html/_manipulating_sppolynomials.html"> polynomial </a> </span> </span>
+</span>
+</li>
+
+<li>
+<span>
+<tt>v</tt>, <span><span> list of variables of the polynomial </span> </span>
+</span>
+</li>
+
+
+<li>
+<span>
+<tt>m</tt>, <span>a list of matrices, must be over QQ</span>
+</span>
+</li>
+
+</span>
+</ul>
+</div>
+</li>
+<li><div class="single">Outputs:
+
+<ul>
+<li>
+<span>
+<span> The corresponing polynomial, invariant under the action of the given matrices.
+
+</span>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+
+
+<div class="single"><h2>Description</h2>
+<div>Given a list of matrices m, for example S2, and poynomial, the method gives an invariant polynomial under the action of this matrices.
+
+<table class="examples"><tr><td><pre>
+i1 : R = QQ[x_1,x_2];
+
+i2 : s2 = getSn(2);
+
+i3 : f = 3*x_1^2 + x_2 ;
+
+
+</td></tr>
+<tr><td><pre>
+
+i4 : reynoldsOperator(f,gens(R),s2)
+
+       3 2   3 2   1     1
+o1 = -x  + -x  + -x  + -x
+       2 1   2 2   2 1   2 2
+
+o1 : R
+
+</pre>
+</td></tr>
+</table>
+</div>
+</div>
+
+
+
+
+</div>
+<div class="single"><h2>See also</h2>
+
+<ul><li><span><a href="molien_teo.html" title="">molienTeo</a></span></li>
+
+
+<li><span><a href="get_quotient.html" title="">getQuotientRing</a></span></li>
+
+<li><span><a href="get_invariant.html" title="">getInvariantRepresentation</a></span></li>
+
+</div>
+
+</div>
+</body>
+</html>
+
