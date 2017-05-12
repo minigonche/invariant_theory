@@ -216,6 +216,7 @@ getInvariantRepresentation = matrixList -> (
 	qr := null; -- The quotient ring of invariants
 	while flag == 0 do (	
 		i = i + 1; -- Advances 
+		if i == length(matrixList) then error("The dimension of invariant polynomials should not excced the size of the group");
 		-- Gets the quotient ring corresponding to the polynomials
 		qr = getQuotientRing(polyVars, polinomialList);
 		-- CHECKS IF THE HS IS EQUAL TO MOLIEN SERIES
@@ -225,7 +226,7 @@ getInvariantRepresentation = matrixList -> (
 		polHil = value(sub(polHil, T => molienVar)); -- Converts to fraction of 't'
 		if (polHil - molienSeries) != 0 then polinomialList = flatten({polinomialList, completePoly_i})
 		else flag = 1;
-		if flag == 0 then print("Next Iteration");
+		if flag == 0 then print("Next Iteration");		
 		);
 	qr	
 );
@@ -285,6 +286,11 @@ B=coefficients(PG-G(PG))
 B#1
 A#1
 
+
+
+sigma = matrix{{1,0,0},{0,-1,0},{0,0,-1}}
+delta = matrix{{1/2,-8660254/10000000,0},{8660254/10000000,1/2,0},{0,0,1}}
+matrices = {id_(QQ^3),delta,delta^2,delta^3,delta^4,delta^5,sigma,sigma*delta,sigma*(delta^2),sigma*(delta^3),sigma*(delta^4),sigma*(delta^5)}
 
 
 
