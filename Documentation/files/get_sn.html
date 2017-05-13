@@ -8,23 +8,29 @@
 <link rel="stylesheet" type="text/css" href="../CSS/doc.css"/>
 </head>
 <body>
-<div><a href="../documentation.html" title="Macaulay2 documentation">Invariant Rings</a> > <a href="molien_teo.html" title="">molienTeo</a></div>
+<div><a href="../documentation.html" title="Macaulay2 documentation">Invariant Rings</a> > <a href="get_quotient.html" title="">getSn</a></div>
 <hr/>
-<div><h1>molienTeo( matrixList )</h1>
-<div>Calculates the Hilbert series of a given matrix list
+<div><h1>getSn(n)</h1>
+<div> Function that constructs the symetric group of order n in a matrix representation.
 
 <div class="single"><h2>Synopsis</h2>
-<ul><li><dl class="element"><dt>Usage:</dt><dd><tt>molienTeo(m)</tt></dd></dl>
+<ul><li><dl class="element"><dt>Usage:</dt><dd>
+<tt>getSn(n)</tt></dd></dl>
 </li>
-<li><span>Function: <a href="molien_teo.html">molienTeo</a></span></li>
+<li><span>Function: <a href="get_quotient.html">getSn</a></span></li>
 <li><div class="single">Inputs:
 
 <ul>
+
 <li>
 <span>
-<tt>m</tt>, <span>a list of matrices, must be over QQ</span>
+<tt>n</tt>, <span><span> number of elements in the permutation of the symetric group </span> </span>
 </span>
 </li>
+
+
+
+</span>
 </ul>
 </div>
 </li>
@@ -33,13 +39,7 @@
 <ul>
 <li>
 <span>
-<span> A tuple
-<ul>
-	<li>
-		<span> The hilbert series as a <a href="http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9/share/doc/Macaulay2/Macaulay2Doc/html/___Fraction__Field.html"> fraction field</a> </span>
-		<span> The variabe t used in the series.</span>
-	</li>
-</ul>
+<span> A list of matrices corresponding to the elements of the symetric group.
 
 </span>
 </li>
@@ -52,26 +52,26 @@
 
 
 <div class="single"><h2>Description</h2>
-<div>Given a list of matrices m, for example S2, the method outputs the corresponding Hilbert Series and variable:
+<div> Given a number of elements n, this function constructs the group of permutations of those elements (that is Sn). This function writes S2 explicitly and for n larger than 2, uses two generators to construct it. See theorem 2.5 of 2.5 of http://www.math.uconn.edu/~kconrad/blurbs/grouptheory/genset.pdf for more details. Here are some examples:
 
 <table class="examples"><tr><td><pre>
 
-i1 : s2 = getSn(2)
+i1 : getSn(2)
 
 o1 = {| 1 0 |, | 0 1 |}
       | 0 1 |  | 1 0 |
 
 o1 : List
 
+
 </td></tr>
 <tr><td><pre>
 
-i2 : molienTeo(s2)
+i2 : getSn(3)
 
-               1
-o2 = {---------------, t}
-         3    2
-        t  - t  - t + 1
+o2 = {| 0 1 0 |, | 0 1 0 |, | 0 0 1 |, | 1 0 0 |, | 0 0 1 |, | 1 0 0 |}
+      | 0 0 1 |  | 1 0 0 |  | 1 0 0 |  | 0 0 1 |  | 0 1 0 |  | 0 1 0 |
+      | 1 0 0 |  | 0 0 1 |  | 0 1 0 |  | 0 1 0 |  | 1 0 0 |  | 0 0 1 |
 
 o2 : List
 
@@ -87,9 +87,7 @@ o2 : List
 </div>
 <div class="single"><h2>See also</h2>
 
-<ul>
-	
-
+<ul><li><span><a href="molien_teo.html" title="">molienTeo</a></span></li>
 
 <li><span><a href="reynolds_op.html" title="">reynoldsOperator</a></span></li>
 
@@ -97,7 +95,7 @@ o2 : List
 
 <li><span><a href="get_invariant.html" title="">getInvariantRepresentation</a></span></li>
 
-<li><span><a href="files/get_sn.html" title="">getSn</a></span></li>
+
 
 </ul>
 
