@@ -7,4 +7,6 @@ The subject of this project is to create a script that can run on Macaulay2 (*ht
 
 Given a list of matrices, we assume they are the image of some finite group **G** under the representation **rho** over a vector space **W** and the script should find a presentation of the invariant ring  of **C[W^]** under **rho**.
 
+See code_explanation.pdf for more details (in spanish).
+
 This project is developed with Daniel de Roux.
